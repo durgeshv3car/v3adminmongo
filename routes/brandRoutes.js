@@ -8,7 +8,7 @@ const {
 
 const router = express.Router();
 
-router.post('/', upload.single('image'), createBrand); // with image upload
+// router.post('/', upload.single('image'), createBrand); // with image upload
 router.get('/', getBrandList);
 router.get('/:slug', getBrandWithCars); // brand detail + cars
 

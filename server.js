@@ -18,16 +18,17 @@ app.use(cors()); // ✅ enable CORS for all origins
 // Optionally add more control:
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+const bannerRoutes = require('./routes/bannerRoutes');
 
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/roles', require('./routes/roleRoutes'));
-app.use('/api/permissions', require('./routes/permissionRoutes'));
 app.use('/api/slider', require('./routes/create_sliderRoutes'));
 app.use('/api/cars', require('./routes/carRoutes'));
 app.use('/api/variants', require('./routes/variantRoutes'));
 app.use('/api/countries', require('./routes/countryRoutes'));
 app.use('/api/brands', require('./routes/brandRoutes'));
 app.use('/api/blogs', require('./routes/blogRoutes'));
+app.use('/api/banners', bannerRoutes);
 
 
 

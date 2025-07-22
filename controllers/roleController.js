@@ -3,9 +3,9 @@ const Role = require('../models/Role');
 // Create Role with permissions
 exports.createRole = async (req, res) => {
     try {
-        const { name, permissions } = req.body; // permissions = [permissionId1, permissionId2]
+        const { name } = req.body; // permissions = [permissionId1, permissionId2]
 
-        const role = await Role.create({ name, permissions });
+        const role = await Role.create({ name});
         res.status(201).json(role);
     } catch (error) {
         res.status(500).json({ message: error.message });

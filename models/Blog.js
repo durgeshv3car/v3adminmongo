@@ -7,7 +7,7 @@ const BlogSchema = new mongoose.Schema({
   author: { type: String, default: 'Admin' },
   category: { type: String, enum: ['News', 'Review', 'Guide', 'Update'], default: 'News' },
   tags: [{ type: String }],
-  image: { type: String }, // Thumbnail or banner image path
+  image: { type: String }, 
   isPublished: { type: Boolean, default: false },
   publishedAt: { type: Date }
 }, { timestamps: true });
