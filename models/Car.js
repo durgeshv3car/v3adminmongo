@@ -16,7 +16,7 @@ const VariantSchema = new mongoose.Schema({
 });
 
 const CarSchema = new mongoose.Schema({
-  brand: { type: String, required: true },
+  brand: { type: mongoose.Schema.Types.ObjectId, ref: 'Brand', required: true },
   model: { type: String, required: true },
   pageType:{ type: String, required: true },
   bodyType: {

@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { protect } = require("../middlewares/authMiddleware");
 const getUploader = require("../middlewares/uploadMiddleware");
-const uploadBrand = getUploader('brands');
+const uploadBrand = getUploader('cars');
 
 const {
   getAllCars,

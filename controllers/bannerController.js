@@ -1,18 +1,20 @@
 const Banner = require('../models/Banner');
+const path = require('path');
+const fs = require('fs');
 
 // ➕ Create a new banner
 exports.createBanner = async (req, res) => {
   try {
-    const { title } = req.body;
+    const { name,carUrl } = req.body;
     const file = req.file;
 
-    if (!file || !title) {
+    if (!file || !name) {
       return res.status(400).json({ message: "Title and Image are required." });
     }
 
     const imageUrl = `${req.protocol}://${req.get('host')}/uploads/banner/${file.filename}`;
 
-    const newBanner = await Banner.create({ title, image: imageUrl });
+    const newBanner = await Banner.create({ name, image: imageUrl,carUrl });
 
     res.status(201).json({
       message: "Banner created successfully",
@@ -28,16 +30,41 @@ exports.createBanner = async (req, res) => {
 exports.updateBanner = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title } = req.body;
-    let image = req.body.image;
+    const { name, carUrl } = req.body;
+    
+    // Find the existing banner first
+    const existingBanner = await Banner.findById(id);
+    if (!existingBanner) {
+      return res.status(404).json({ message: "Banner not found" });
+    }
 
+    // Handle image update
+    let image = existingBanner.image;
     if (req.file) {
+      // Delete old image if it exists
+      if (existingBanner.image) {
+        try {
+          const oldFilename = existingBanner.image.split('/').pop();
+          const oldImagePath = path.join(__dirname, '..', 'uploads', 'banner', oldFilename);
+          if (fs.existsSync(oldImagePath)) {
+            fs.unlinkSync(oldImagePath);
+          }
+        } catch (err) {
+          console.error('Error deleting old image file:', err);
+        }
+      }
+      
+      // Set new image path
       image = `${req.protocol}://${req.get('host')}/uploads/banner/${req.file.filename}`;
     }
 
     const updatedBanner = await Banner.findByIdAndUpdate(
       id,
-      { title, image },
+      { 
+        name: name || existingBanner.name,
+        image,
+        carUrl: carUrl || existingBanner.carUrl
+      },
       { new: true, runValidators: true }
     );
 
@@ -86,17 +113,27 @@ exports.getBannerById = async (req, res) => {
 // 🗑️ Delete a banner
 exports.deleteBanner = async (req, res) => {
   try {
-    const { id } = req.params;
-
-    const deleted = await Banner.findByIdAndDelete(id);
-
-    if (!deleted) {
-      return res.status(404).json({ message: "Banner not found" });
+    const brand = await Banner.findOneAndDelete({ _id:req.params.id });
+    if (!brand) {
+      return res.status(404).json({ message: 'Brand not found' });
     }
 
-    res.status(200).json({ message: "Banner deleted successfully" });
+    // Delete the image file if it exists
+    if (brand.image) {
+      try {
+        const filename = brand.image.split('/').pop(); // Get the filename from the URL
+        const imagePath = path.join(__dirname, '..', 'uploads', 'banner', filename);
+        if (fs.existsSync(imagePath)) {
+          fs.unlinkSync(imagePath);
+        }
+      } catch (err) {
+        console.error('Error deleting image file:', err);
+        // Continue with the response even if image deletion fails
+      }
+    }
+
+    res.json({ message: 'Brand deleted successfully' });
   } catch (error) {
-    console.error("Error deleting banner:", error);
-    res.status(500).json({ message: "Server error", error });
+    res.status(500).json({ message: error.message });
   }
 };

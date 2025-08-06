@@ -6,7 +6,12 @@ const BannerSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
-    title: {
+    name: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    carUrl: {
         type: String,
         required: true,
         trim: true

@@ -42,18 +42,18 @@ exports.loginUser = async (req, res) => {
     const token = jwt.sign(
       {
         id: user._id,
-        role: user.role.name,  // or role._id if you just want ID
+        role: user.role.name,  
         name: user.name,
         email: user.email,
       },
       process.env.JWT_SECRET,
-      { expiresIn: '1h' }
+      { expiresIn: '30d' }
     );
 
     res.status(200).json({
       id: user._id,
       token,
-      role: user.role,          // Full role object
+      role: user.role,          
       permissions: user.permissions,
     });
   } catch (err) {

@@ -3,7 +3,9 @@ const Car = require("../models/Car");
 const getCars = async (req, res) => {
   try {
     const { pageType } = req.query;
-    const cars = await Car.find({ pageType });
+
+    const cars = await Car.find({ pageType }).populate("brand", "name");
+
     res.status(200).json(cars);
   } catch (error) {
     res.status(500).json({ message: "Error fetching cars", error });
@@ -13,7 +15,7 @@ const getCars = async (req, res) => {
 const createCar = async (req, res) => {
   try {
     const {
-      brand,
+      brandId,
       model,
       pageType,
       bodyType,
@@ -35,10 +37,10 @@ const createCar = async (req, res) => {
     // Construct full image URL
     const protocol = req.protocol; // http or https
     const host = req.get("host");  // domain with port
-    const imagePath = req.file ? `${protocol}://${host}/uploads/brands/${req.file.filename}` : "";
+    const imagePath = req.file ? `${protocol}://${host}/uploads/cars/${req.file.filename}` : "";
 
     const newCar = await Car.create({
-      brand,
+      brand: brandId, 
       model,
       pageType,
       bodyType,
@@ -50,7 +52,7 @@ const createCar = async (req, res) => {
       priceRange,
       description,
       dimensions: parsedDimensions,
-      image: imagePath, // ✅ store full URL instead of just filename
+      image: imagePath, 
     });
 
     res.status(201).json(newCar);
@@ -291,7 +293,7 @@ const updateCar = async (req, res) => {
     if (req.file) {
       const protocol = req.protocol;
       const host = req.get("host");
-      updateData.image = `${protocol}://${host}/uploads/brands/${req.file.filename}`;
+      updateData.image = `${protocol}://${host}/uploads/cars/${req.file.filename}`;
     }
 
     const updatedCar = await Car.findByIdAndUpdate(carId, updateData, {
