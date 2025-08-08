@@ -29,6 +29,7 @@ app.use('/api/countries', require('./routes/countryRoutes'));
 app.use('/api/brands', require('./routes/brandRoutes'));
 app.use('/api/blogs', require('./routes/blogRoutes'));
 app.use('/api/banners', bannerRoutes);
+app.use('/api/reviews', require('./routes/reviewRoutes'));
 
 
 
